@@ -3,7 +3,7 @@ package acadt_ut1_p1;
 import java.io.File;
 
 public class Ejercicio3 {
-	
+
 	public static void main(String[] args) {
 		String ruta = "src/2DAM/AD/";
 		String nombre = "P1.txt";
