@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Ejercicio1 {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Creamos variables necesarias
 		File ruta = new File("./usuarios.txt");
 		String dni, nombre, apellido, fechaNac;
