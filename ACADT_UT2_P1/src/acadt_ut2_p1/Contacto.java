@@ -87,4 +87,13 @@ public class Contacto implements Serializable {
 		System.out.println(texto);
 		return s.nextLine();
 	}
+
+	public void mostrarContacto() {
+		System.out.println("C O N T A C T O");
+		System.out.println("Nombre: " + nombre);
+		System.out.println("Apellidos: " + apellidos);
+		System.out.println("Email: " + email);
+		System.out.println("Teléfono: " + telefono);
+		System.out.println("----------------------------");
+	}
 }
