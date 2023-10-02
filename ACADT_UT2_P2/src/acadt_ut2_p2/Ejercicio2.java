@@ -30,9 +30,6 @@ public class Ejercicio2 {
 		InputSource xmlFile = new InputSource("src/empleados.xml");
 		procesadorxml.parse(xmlFile);
 
-//		for (String s : info) {
-//			System.out.println(s);
-//		}
 		// GENERO LOS OBJETOS Y LOS INTRODUZCOS EN UN SET
 		generarEmpleados();
 		// MOSTRAR
