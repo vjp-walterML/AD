@@ -1,4 +1,4 @@
-package acadt_ut2_p1;
+package acadt_ut2_p3;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ public class Libro implements Serializable {
 	private String titulo;
 	private String autor;
 	private String editorial;
-	
+
 	public Libro(String isbn, String titulo, String autor, String editorial) {
 		this.isbn = isbn;
 		this.titulo = titulo;
@@ -46,15 +46,15 @@ public class Libro implements Serializable {
 	public void setEditorial(String editorial) {
 		this.editorial = editorial;
 	}
-	
-	//Mostrar Libro
+
+	// Mostrar Libro
 	public void mostrar() {
 		System.out.println("-----------------------");
-		System.out.println("ISBN: "+isbn);
-		System.out.println("Título: "+titulo);
-		System.out.println("Autor: "+autor);
-		System.out.println("Editorial: "+editorial);
+		System.out.println("ISBN: " + isbn);
+		System.out.println("Título: " + titulo);
+		System.out.println("Autor: " + autor);
+		System.out.println("Editorial: " + editorial);
 		System.out.println("-----------------------");
 	}
-	
+
 }
