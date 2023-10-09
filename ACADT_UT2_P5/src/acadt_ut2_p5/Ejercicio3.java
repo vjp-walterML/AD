@@ -30,13 +30,10 @@ public class Ejercicio3 {
 		xstream.addPermission(AnyTypePermission.ANY);
 		// Alias
 		xstream.alias("libros", ListaLibros.class);
-		//xstream.alias("autores", ListaAutores.class);
 		xstream.alias("libro", Libro.class);
-		//xstream.alias("autor", Autor.class);
+		xstream.alias("autor", String.class);
 		// AddImplicitCollection
 		xstream.addImplicitCollection(ListaLibros.class, "libros");
-		xstream.addImplicitCollection(Libro.class, "autores", "autor", String.class);
-		//xstream.addImplicitCollection(ListaAutores.class, "autores");	
 
 		// Recuperamos el objeto ListaLibros
 		libros = (ListaLibros) xstream.fromXML(new FileInputStream("libros-14.xml"));

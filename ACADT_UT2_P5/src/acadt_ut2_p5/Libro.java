@@ -11,7 +11,6 @@ public class Libro implements Serializable {
 
 	private String ISBN;
 	private String titulo;
-	//private ListaAutores autores;
 	private List<String> autores;
 	private String editorial;
 
@@ -62,7 +61,6 @@ public class Libro implements Serializable {
 		System.out.println("Título:" + titulo);
 		System.out.println("Editorial: " + editorial);
 		System.out.println("Autores:");
-//		 autores.mostrar();
 		for (String string : autores) {
 			System.out.println(string);
 		}
