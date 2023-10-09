@@ -1,19 +1,26 @@
 package acadt_ut2_p5;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 public class Libro implements Serializable {
 
 	private String ISBN;
 	private String titulo;
-	private List<Autor> autores;
+	//private ListaAutores autores;
+	private List<String> autores;
+	private String editorial;
 
-	public Libro(String iSBN, String titulo, List<Autor> autores) {
+	public Libro(String iSBN, String titulo, List<String> autores, String editorial) {
 		super();
 		ISBN = iSBN;
 		this.titulo = titulo;
 		this.autores = autores;
+		this.editorial = editorial;
 	}
 
 	public String getISBN() {
@@ -32,12 +39,20 @@ public class Libro implements Serializable {
 		this.titulo = titulo;
 	}
 
-	public List<Autor> getAutores() {
+	public List<String> getAutores() {
 		return autores;
 	}
 
-	public void setAutores(List<Autor> autores) {
+	public void setAutores(List<String> autores) {
 		this.autores = autores;
+	}
+
+	public String getEditorial() {
+		return editorial;
+	}
+
+	public void setEditorial(String editorial) {
+		this.editorial = editorial;
 	}
 
 	// MOSTRAR
@@ -45,9 +60,11 @@ public class Libro implements Serializable {
 		System.out.println("----- LIBRO -----");
 		System.out.println("ISBN:" + ISBN);
 		System.out.println("Título:" + titulo);
+		System.out.println("Editorial: " + editorial);
 		System.out.println("Autores:");
-		for (Autor autor : autores) {
-			System.out.println("\t" + autor.getNombre());
+//		 autores.mostrar();
+		for (String string : autores) {
+			System.out.println(string);
 		}
 	}
 }
