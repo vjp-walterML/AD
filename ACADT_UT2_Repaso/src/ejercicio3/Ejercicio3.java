@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Ejercicio3 {
@@ -45,13 +44,19 @@ public class Ejercicio3 {
 
 	// Método para leer cada uno de los emails
 	public static void comprobarEmails(File[] emails) throws IOException {
+		boolean infringido;
 		// Itero cada email, leo y compruebo
 		for (int i = 0; i < emails.length; i++) {
 			// Abro flujos
 			BufferedReader br = new BufferedReader(new FileReader(emails[i]));
 			String linea = br.readLine();
-			while (linea != null) {
-				// comprobarLinea(linea)
+			infringido = false;
+			while (linea != null && infringido == false) {
+				if (comprobarLinea(linea)) {
+					System.out.println("El trabajador " + autorEmail(emails[i])
+							+ " está infringiendo las normativas de seguridad.");
+					infringido = true;
+				}
 				linea = br.readLine();
 			}
 		}
@@ -59,6 +64,22 @@ public class Ejercicio3 {
 
 	// Método para comprobar si en una linea existe alguna palabra alarmante
 	public static boolean comprobarLinea(String linea) {
-		return true;
+		boolean palabraProhibida = false;
+		int contador = 0;
+		// Utilizo un while para una busqueda lineal porque es mas eficiente
+		while (contador < palabrasAlarmantes.size() && palabraProhibida == false) {
+			if (linea.contains(palabrasAlarmantes.get(contador))) {
+				palabraProhibida = true;
+			} else {
+				contador++;
+			}
+		}
+		return palabraProhibida;
+	}
+
+	// Método que extrae el nombre del autor del correo
+	public static String autorEmail(File email) {
+		String autorEmail = email.getName().split("-")[1];
+		return autorEmail.split(".txt")[0];
 	}
 }
