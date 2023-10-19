@@ -31,7 +31,7 @@ public class Ejercicio4 {
 		// Creamos objeto y lo recuperamos
 		Esdla esdla = (Esdla) xstream.fromXML(new FileInputStream(fichero));
 		// Mostramos el objeto
-		//esdla.mostrar();
+		esdla.mostrar();
 		// Retornamos el objeto
 		return esdla;
 	}

@@ -36,12 +36,14 @@ public class Ejercicio6 {
 		JsonWriter writer = new JsonWriter(new FileWriter(ficheroJson));
 		// ================== E S C R I B I M O S ==================
 		writer.beginObject();
-		writer.name("esdla").beginObject();
+		writer.name("esdla");
+		writer.beginObject();
 		// ************************************************************
 		// AUTOR
 		writer.name("autor").value(esdla.getAutor());
 		// CIUDADES
-		writer.name("ciudades").beginObject();
+		writer.name("ciudades");
+		writer.beginObject();
 		writer.name("ciudad").beginArray();
 		for (Ciudad ciudad : esdla.getCiudades()) {
 			writer.beginObject();
