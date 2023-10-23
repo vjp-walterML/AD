@@ -1,10 +1,16 @@
 package ejercicio5;
 
+import com.mysql.cj.xdevapi.FindStatementImpl;
+
 import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Ejercicio5 {
+
+    //Variables globales
+    final static int PUERTO = 3306;
+
     public static void main(String[] args) throws InterruptedException, SQLException, ClassNotFoundException {
         int opcion;
         Connection conexion;
@@ -76,7 +82,7 @@ public class Ejercicio5 {
         //Cargamos el driver
         Class.forName("com.mysql.cj.jdbc.Driver");
         //Establecemos la conexión
-        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost:3307/empresa", "root", "");
+        Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost:" + PUERTO + "/empresa", "root", "");
         return conexion;
     }
 
@@ -88,7 +94,7 @@ public class Ejercicio5 {
         ResultSet resultado = sentencia.executeQuery(sql);//Resultado es como un iterador
         //Recorremos el resultado
         System.out.println("=== LISTADO DE EMPLEADOS===");
-        while (resultado.next()){
+        while (resultado.next()) {
             System.out.println("------------------------");
             System.out.println("Número de empleado: " + resultado.getInt(1));
             System.out.println("Apellido: " + resultado.getString(2));
@@ -112,7 +118,7 @@ public class Ejercicio5 {
         String sql = "SELECT emp_no,apellido,oficio,fecha_alt,salario,dept_no FROM EMPLEADOS WHERE emp_no = " + String.valueOf(emp_no);
         ResultSet resultado = sentencia.executeQuery(sql);//Resultado es como un iterador
         //Recorremos el resultado
-        while (resultado.next()){
+        while (resultado.next()) {
             System.out.println("------------------------");
             System.out.println("Número de empleado: " + resultado.getInt(1));
             System.out.println("Apellido: " + resultado.getString(2));
@@ -136,7 +142,7 @@ public class Ejercicio5 {
         String sql = "SELECT emp_no,apellido,oficio,fecha_alt,salario,dept_no FROM EMPLEADOS WHERE salario > " + String.valueOf(salario);
         ResultSet resultado = sentencia.executeQuery(sql);//Resultado es como un iterador
         //Recorremos el resultado
-        while (resultado.next()){
+        while (resultado.next()) {
             System.out.println("------------------------");
             System.out.println("Número de empleado: " + resultado.getInt(1));
             System.out.println("Apellido: " + resultado.getString(2));
@@ -160,7 +166,7 @@ public class Ejercicio5 {
         String sql = "SELECT emp_no,apellido,oficio,fecha_alt,salario,dept_no FROM EMPLEADOS WHERE salario <= " + String.valueOf(salario);
         ResultSet resultado = sentencia.executeQuery(sql);//Resultado es como un iterador
         //Recorremos el resultado
-        while (resultado.next()){
+        while (resultado.next()) {
             System.out.println("------------------------");
             System.out.println("Número de empleado: " + resultado.getInt(1));
             System.out.println("Apellido: " + resultado.getString(2));
