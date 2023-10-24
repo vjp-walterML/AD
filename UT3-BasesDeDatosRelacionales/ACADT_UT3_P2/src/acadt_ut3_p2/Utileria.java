@@ -3,6 +3,10 @@ package acadt_ut3_p2;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import java.time.DateTimeException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -46,11 +50,40 @@ public class Utileria {
         return entero;
     }
 
+    //PEDIR STRING
+    public static String pedirString(String texto) {
+        Scanner s = new Scanner(System.in);
+        System.out.println(texto);
+        return s.nextLine();
+    }
+
+    //PEDIR DATE
+    public static Date pedirDate() {
+        Scanner s = new Scanner(System.in);
+        LocalDate fecha;
+        String fechaString = pedirString("Introduce la fecha en formato '1998-08-27':");
+        String[] fechaArray = fechaString.split("-");
+        try {
+            fecha = LocalDate.of(Integer.valueOf(fechaArray[0]), Integer.valueOf(fechaArray[1]), Integer.valueOf(fechaArray[2]));
+        } catch (DateTimeException e) {
+            System.out.println("ERROR:Por favor, introduzca una fecha válida.");
+            return pedirDate();
+        }
+        return Date.valueOf(fecha);
+    }
+
     //SIMULACIÓN ESPERA
     public static void simulacionEspera() throws InterruptedException {
         for (int i = 0; i < 3; i++) {
             System.out.print(" .");
             Thread.sleep(1000);
         }
+    }
+
+    //SI O NO
+    public static boolean seguir(String texto){
+        Scanner s = new Scanner (System.in);
+        System.out.println(texto);
+        return s.nextLine().equalsIgnoreCase("si");
     }
 }

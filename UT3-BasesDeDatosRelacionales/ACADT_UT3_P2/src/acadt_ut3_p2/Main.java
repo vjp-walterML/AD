@@ -42,7 +42,7 @@ public class Main {
         //Liberamos recursos
         conexion.close();
     }
-    
+
     //MENÚ GENERAL
     public static int mostrarMenuGeneral() {
         Scanner s = new Scanner(System.in);
@@ -95,10 +95,10 @@ public class Main {
             opcion = mostrarMenuGestionEmpleados();
             switch (opcion) {
                 case 1:
-
+                    opcion1GestionEmpleados(conexion);
                     break;
                 case 2:
-
+                    opcion2GestionEmpleados(conexion);
                     break;
                 case 3:
 
@@ -181,6 +181,150 @@ public class Main {
     }
 
     //GESTIÓN DE EMPLEADOS ==================================================
+
+    public static void opcion1GestionEmpleados(Connection conexion) throws SQLException {
+//        ENUNCIADO: Insertar Empleado
+//        Ejecutamos sentencias
+        Statement sentencia = conexion.createStatement();
+        String sql = "INSERT INTO EMPLEADOS VALUES(?,?,?,?,?,?,?,?)";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+//        Creamos empleado
+        Empleado empleado = new Empleado();
+        empleado.rellenarInfo();
+//        Rellenamos variables de la sentencia preparada
+        sentenciaPreparada.setInt(1, empleado.getEmp_no());
+        sentenciaPreparada.setString(2, empleado.getApellido());
+        sentenciaPreparada.setString(3, empleado.getOficio());
+        sentenciaPreparada.setInt(4, empleado.getDir());
+        sentenciaPreparada.setDate(5, empleado.getFecha_alt());
+        sentenciaPreparada.setFloat(6, empleado.getSalario());
+        sentenciaPreparada.setFloat(7, empleado.getComision());
+        sentenciaPreparada.setInt(8, empleado.getDep_no());
+//       Ejecutamos la sentencia
+        System.out.println("Se han afectado " + sentenciaPreparada.executeUpdate() + " filas.");
+        System.out.println("¡EMPLEADO INSERTADO CORRECTAMENTE!");
+//        LIBERAMOS RECURSOS
+        sentenciaPreparada.close();
+        sentencia.close();
+    }
+
+    public static void opcion2GestionEmpleados(Connection conexion) throws SQLException {
+//        ENUNCIADO: Modificar empleado
+        Empleado empleadoModificado = new Empleado();
+//        En primer lugar recuperamos el emp_no del empleado que queremos modificar
+        int emp_no_user = pedirEntero("Introduzca el 'emp_no' del empleado que quieres modificar:");
+//        Sentencia de búsqueda
+        Statement sentencia = conexion.createStatement();
+        String sql = "SELECT * FROM EMPLEADOS WHERE emp_no = ?";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setInt(1, emp_no_user);
+        ResultSet resultado = sentenciaPreparada.executeQuery();
+        //Recorremos el resultado mientras preguntamos las modificaciones
+        System.out.println("===== MODIFICANDO EMPLEADO =====");
+        //Apellido
+        if (seguir("¿Desea modificar el apellido?")) {
+            System.out.println("El apellido actual es " + resultado.getString("apellido"));
+            empleadoModificado.setApellido(pedirString("Introduzca el apellido modificado:"));
+        }
+        //Oficio
+        if (seguir("¿Desea modificar el oficio?")) {
+            System.out.println("El oficio actual es " + resultado.getString("oficio"));
+            empleadoModificado.setOficio(pedirString("Introduzca el oficio modificado:"));
+        }
+        //Dir
+        if (seguir("¿Desea modificar el dir?")) {
+            System.out.println("El dir actual es " + resultado.getInt("dir"));
+            empleadoModificado.setDir(pedirEntero("Introduzca el dir modificado:"));
+        }
+        //Fecha_alt
+        if (seguir("¿Desea modificar la fecha_alt?")) {
+            System.out.println("La fecha_alt actual es " + resultado.getDate("fecha_alt"));
+            empleadoModificado.setFecha_alt(pedirDate());
+        }
+        //Salario
+        if (seguir("¿Desea modificar el salario?")) {
+            System.out.println("El salario actual es " + resultado.getFloat("salario"));
+            empleadoModificado.setSalario(pedirFloat("Introduzca el salario modificado:"));
+        }
+        //Comision
+        if (seguir("¿Desea modificar la comisión?")) {
+            System.out.println("La comisión actual es " + resultado.getFloat("comision"));
+            empleadoModificado.setComision(pedirFloat("Introduzca la comisión modificada:"));
+        }
+        //Comision
+        if (seguir("¿Desea modificar la comisión?")) {
+            System.out.println("La comisión actual es " + resultado.getFloat("comision"));
+            empleadoModificado.setComision(pedirFloat("Introduzca la comisión modificada:"));
+        }
+        //Dept_no
+        if (seguir("¿Desea modificar el dept_no?")) {
+            System.out.println("El dept_no actual es " + resultado.getInt("dept_no"));
+            empleadoModificado.setDep_no(pedirEntero("Introduzca el dept_no modificado:"));
+        }
+
+        //SENTENCIA DE ACTUALIZACIÓN
+        sentencia = conexion.createStatement();
+        sql = "UPDATE EMPLEADOS SET" +
+                " apellido = ?," +
+                " oficio = ?," +
+                " dir = ?," +
+                " fecha_alt = ?," +
+                " salario = ?," +
+                " comision = ?," +
+                " dept_no = ?" +
+                " WHERE emp_no = ?";
+        sentenciaPreparada = conexion.prepareStatement(sql);
+        //Apellido
+        if (empleadoModificado.getApellido() != null) {
+            sentenciaPreparada.setString(1, empleadoModificado.getApellido());
+        } else {
+            sentenciaPreparada.setString(1, resultado.getString("apellido"));
+        }
+        //oficio
+        if (empleadoModificado.getOficio() != null) {
+            sentenciaPreparada.setString(2, empleadoModificado.getOficio());
+        } else {
+            sentenciaPreparada.setString(2, resultado.getString("oficio"));
+        }
+        //dir
+        if (empleadoModificado.getDir() != 0) {
+            sentenciaPreparada.setInt(3, empleadoModificado.getDir());
+        } else {
+            sentenciaPreparada.setInt(3, resultado.getInt("dir"));
+        }
+        //fecha_alt
+        if (empleadoModificado.getFecha_alt() != null) {
+            sentenciaPreparada.setDate(4, empleadoModificado.getFecha_alt());
+        } else {
+            sentenciaPreparada.setDate(4, resultado.getDate("fecha_alt"));
+        }
+        //salario
+        if (empleadoModificado.getSalario() != 0) {
+            sentenciaPreparada.setFloat(5, empleadoModificado.getSalario());
+        } else {
+            sentenciaPreparada.setFloat(5, resultado.getFloat("salario"));
+        }
+        //comision
+        if (empleadoModificado.getComision() != 0) {
+            sentenciaPreparada.setFloat(6, empleadoModificado.getComision());
+        } else {
+            sentenciaPreparada.setFloat(6, resultado.getFloat("comision"));
+        }
+        //dept_no
+        if (empleadoModificado.getDep_no() != 0) {
+            sentenciaPreparada.setInt(7, empleadoModificado.getDep_no());
+        } else {
+            sentenciaPreparada.setInt(7, resultado.getInt("dept_no"));
+        }
+//      LIBERAMOS RECURSOS
+        resultado.close();
+        sentenciaPreparada.close();
+        sentencia.close();
+
+        System.out.println("Se han actualizado " + sentenciaPreparada.executeUpdate() + " filas.");
+        System.out.println("¡EMPLEADO ACTUALIZADO CORRECTAMENTE!");
+    }
+
     public static void opcion4GestionEmpleados(Connection conexion) throws SQLException {
 //       ENUNCIADO: Consultar todos los empleados
         //Ejecutamos sentencias
