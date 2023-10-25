@@ -8,7 +8,7 @@ import static acadt_ut3_p2.Utileria.*;
 
 public class Main {
     //Variables globales
-    final static int PUERTO = 3306;
+    final static int PUERTO = 3307;
 
     public static void main(String[] args) throws InterruptedException, SQLException, ClassNotFoundException {
         int opcion;
@@ -59,7 +59,7 @@ public class Main {
             opcion = s.nextInt();
         } catch (InputMismatchException e) {
             System.out.println("Error: No puedes introducir una letra.");
-            opcion = mostrarMenuGestionEmpleados();
+            opcion = mostrarMenuGeneral();
         }
         return opcion;
     }
@@ -101,14 +101,13 @@ public class Main {
                     opcion2GestionEmpleados(conexion);
                     break;
                 case 3:
-
+                    opcion3GestionEmpleados(conexion);
                     break;
                 case 4:
                     opcion4GestionEmpleados(conexion);
-
                     break;
                 case 5:
-
+                    opcion5GestionEmpleados(conexion);
                     break;
                 case 6:
                     opcion6GestionEmpleados(conexion);
@@ -122,7 +121,6 @@ public class Main {
                 default:
                     System.out.println("Error:Introduzca una opción válida.");
                     break;
-
             }
         } while (opcion != 9);
     }
@@ -145,7 +143,7 @@ public class Main {
             opcion = s.nextInt();
         } catch (InputMismatchException e) {
             System.out.println("Error: No puedes introducir una letra.");
-            opcion = mostrarMenuGestionEmpleados();
+            opcion = mostrarMenuGestionDepartamentos();
         }
         return opcion;
     }
@@ -156,22 +154,22 @@ public class Main {
             opcion = mostrarMenuGestionDepartamentos();
             switch (opcion) {
                 case 1:
-
+                    opcion1GestionDepartamentos(conexion);
                     break;
                 case 2:
-
+                    opcion2GestionDepartamentos(conexion);
                     break;
                 case 3:
-
+                    opcion3GestionDepartamentos(conexion);
                     break;
                 case 4:
-
+                    opcion4GestionDepartamentos(conexion);
                     break;
                 case 5:
-
+                    opcion5GestionDepartamentos(conexion);
                     break;
                 case 6:
-
+                    opcion6GestionDepartamentos(conexion);
                     break;
                 default:
                     System.out.println("Error:Introduzca una opción válida.");
@@ -181,7 +179,6 @@ public class Main {
     }
 
     //GESTIÓN DE EMPLEADOS ==================================================
-
     public static void opcion1GestionEmpleados(Connection conexion) throws SQLException {
 //        ENUNCIADO: Insertar Empleado
 //        Ejecutamos sentencias
@@ -214,11 +211,11 @@ public class Main {
 //        En primer lugar recuperamos el emp_no del empleado que queremos modificar
         int emp_no_user = pedirEntero("Introduzca el 'emp_no' del empleado que quieres modificar:");
 //        Sentencia de búsqueda
-        Statement sentencia = conexion.createStatement();
         String sql = "SELECT * FROM EMPLEADOS WHERE emp_no = ?";
         PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
         sentenciaPreparada.setInt(1, emp_no_user);
         ResultSet resultado = sentenciaPreparada.executeQuery();
+        resultado.next();//Sacamos el primer y único resultado teórico.
         //Recorremos el resultado mientras preguntamos las modificaciones
         System.out.println("===== MODIFICANDO EMPLEADO =====");
         //Apellido
@@ -251,11 +248,6 @@ public class Main {
             System.out.println("La comisión actual es " + resultado.getFloat("comision"));
             empleadoModificado.setComision(pedirFloat("Introduzca la comisión modificada:"));
         }
-        //Comision
-        if (seguir("¿Desea modificar la comisión?")) {
-            System.out.println("La comisión actual es " + resultado.getFloat("comision"));
-            empleadoModificado.setComision(pedirFloat("Introduzca la comisión modificada:"));
-        }
         //Dept_no
         if (seguir("¿Desea modificar el dept_no?")) {
             System.out.println("El dept_no actual es " + resultado.getInt("dept_no"));
@@ -263,7 +255,6 @@ public class Main {
         }
 
         //SENTENCIA DE ACTUALIZACIÓN
-        sentencia = conexion.createStatement();
         sql = "UPDATE EMPLEADOS SET" +
                 " apellido = ?," +
                 " oficio = ?," +
@@ -316,13 +307,29 @@ public class Main {
         } else {
             sentenciaPreparada.setInt(7, resultado.getInt("dept_no"));
         }
+        // Emp_no
+        sentenciaPreparada.setInt(8, emp_no_user);
+
+        System.out.println("Se han actualizado " + sentenciaPreparada.executeUpdate() + " filas.");
 //      LIBERAMOS RECURSOS
         resultado.close();
         sentenciaPreparada.close();
-        sentencia.close();
 
-        System.out.println("Se han actualizado " + sentenciaPreparada.executeUpdate() + " filas.");
         System.out.println("¡EMPLEADO ACTUALIZADO CORRECTAMENTE!");
+    }
+
+    public static void opcion3GestionEmpleados(Connection conexion) throws SQLException {
+        //        ENUNCIADO: Borrar empleado
+        //En primer lugar pedimos al usuario el emp_no del empleado que queremos eliminar de la base de datos
+        int emp_no_user = pedirEntero("Introduzca el 'emp_no' del empleado que quieres eliminar:");
+        //Elaboramos la sentencia
+        String sql = "DELETE FROM EMPLEADOS WHERE emp_no = ?";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setInt(1, emp_no_user);
+        System.out.println("Se han actualizado " + sentenciaPreparada.executeUpdate() + " filas.");
+        //Liberamos recursos
+        sentenciaPreparada.close();
+        System.out.println("¡EMPLEADO ELIMINADO CORRECTAMENTE!");
     }
 
     public static void opcion4GestionEmpleados(Connection conexion) throws SQLException {
@@ -342,9 +349,37 @@ public class Main {
             System.out.println("Salario: " + resultado.getFloat(5));
             System.out.println("Departamento: " + resultado.getInt(6));
         }
+        System.out.println("=== FIN DEL LISTADO DE EMPLEADOS===");
 
 //        Liberamos recursos
         sentencia.close();
+        resultado.close();
+    }
+
+    public static void opcion5GestionEmpleados(Connection conexion) throws SQLException {
+//       ENUNCIADO: Consultar todos los empleados de un departamento
+        //Pedimos al usuario el número de departamento
+        int dept_no_user = pedirEntero("Introduzca el 'dept_no' para consultar los empleados:");
+        //Ejecutamos sentencias
+        String sql = "SELECT emp_no,apellido,oficio,fecha_alt,salario,dept_no FROM EMPLEADOS WHERE dept_no = ?";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setInt(1, dept_no_user);
+        ResultSet resultado = sentenciaPreparada.executeQuery();//Resultado es como un iterador
+        //Recorremos el resultado
+        System.out.println("=== LISTADO DE EMPLEADOS===");
+        while (resultado.next()) {
+            System.out.println("------------------------");
+            System.out.println("Número de empleado: " + resultado.getInt(1));
+            System.out.println("Apellido: " + resultado.getString(2));
+            System.out.println("Oficio: " + resultado.getString(3));
+            System.out.println("Fecha de alta: " + resultado.getDate(4));
+            System.out.println("Salario: " + resultado.getFloat(5));
+            System.out.println("Departamento: " + resultado.getInt(6));
+        }
+        System.out.println("=== FIN DEL LISTADO DE EMPLEADOS===");
+
+//        Liberamos recursos
+        sentenciaPreparada.close();
         resultado.close();
     }
 
@@ -353,11 +388,10 @@ public class Main {
         System.out.println("========= EMPLEADOS =========");
         int emp_no = pedirEntero("Introduzca el número de empleado: ");
         //Ejecutamos sentencias
-        Statement sentencia = conexion.createStatement();
         String sql = "SELECT emp_no,apellido,oficio,fecha_alt,salario,dept_no FROM EMPLEADOS WHERE emp_no = ?";
         PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
         sentenciaPreparada.setInt(1, emp_no);
-        ResultSet resultado = sentencia.executeQuery(sql);//Resultado es como un iterador
+        ResultSet resultado = sentenciaPreparada.executeQuery();//Resultado es como un iterador
         //Recorremos el resultado
         while (resultado.next()) {
             System.out.println("------------------------");
@@ -368,9 +402,9 @@ public class Main {
             System.out.println("Salario: " + resultado.getFloat(5));
             System.out.println("Departamento: " + resultado.getInt(6));
         }
-
+        System.out.println("========= FIN DE EMPLEADOS =========");
 //        Liberamos recursos
-        sentencia.close();
+        sentenciaPreparada.close();
         resultado.close();
     }
 
@@ -379,11 +413,10 @@ public class Main {
         System.out.println("========= EMPLEADOS =========");
         float salario = pedirFloat("Introduzca un salario: ");
         //Ejecutamos sentencias
-        Statement sentencia = conexion.createStatement();
         String sql = "SELECT emp_no,apellido,oficio,fecha_alt,salario,dept_no FROM EMPLEADOS WHERE salario > ?";
         PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
         sentenciaPreparada.setFloat(1, salario);
-        ResultSet resultado = sentencia.executeQuery(sql);//Resultado es como un iterador
+        ResultSet resultado = sentenciaPreparada.executeQuery();//Resultado es como un iterador
         //Recorremos el resultado
         while (resultado.next()) {
             System.out.println("------------------------");
@@ -395,8 +428,9 @@ public class Main {
             System.out.println("Departamento: " + resultado.getInt(6));
         }
 
+        System.out.println("========= FIN DE EMPLEADOS =========");
 //        Liberamos recursos
-        sentencia.close();
+        sentenciaPreparada.close();
         resultado.close();
     }
 
@@ -405,11 +439,10 @@ public class Main {
         System.out.println("========= EMPLEADOS =========");
         float salario = pedirFloat("Introduzca un salario: ");
         //Ejecutamos sentencias
-        Statement sentencia = conexion.createStatement();
         String sql = "SELECT emp_no,apellido,oficio,fecha_alt,salario,dept_no FROM EMPLEADOS WHERE salario <= ?";
         PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
         sentenciaPreparada.setFloat(1, salario);
-        ResultSet resultado = sentencia.executeQuery(sql);//Resultado es como un iterador
+        ResultSet resultado = sentenciaPreparada.executeQuery();//Resultado es como un iterador
         //Recorremos el resultado
         while (resultado.next()) {
             System.out.println("------------------------");
@@ -420,12 +453,159 @@ public class Main {
             System.out.println("Salario: " + resultado.getFloat(5));
             System.out.println("Departamento: " + resultado.getInt(6));
         }
-
+        System.out.println("========= FIN DE EMPLEADOS =========");
 //        Liberamos recursos
-        sentencia.close();
+        sentenciaPreparada.close();
         resultado.close();
     }
 
+    //=======================================================================
+    //GESTIÓN DE DEPARTAMENTOS ==============================================
+    public static void opcion1GestionDepartamentos(Connection conexion) throws SQLException {
+//        ENUNCIADO: Insertar Departamento
+        Departamento departamento = new Departamento();
+        departamento.rellenarInfo();
+//        Ejecutamos sentencia
+        String sql = "INSERT INTO DEPARTAMENTOS VALUES(?,?,?)";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setInt(1, departamento.getDep_no());
+        sentenciaPreparada.setString(2, departamento.getDnombre());
+        sentenciaPreparada.setString(3, departamento.getLoc());
+        System.out.println("Se han actualizado " + sentenciaPreparada.executeUpdate() + " filas.");
+
+//      LIBERAMOS RECURSOS
+        sentenciaPreparada.close();
+
+        System.out.println("¡DEPARTAMENTO INSERTADO CORRECTAMENTE!");
+    }
+
+    public static void opcion2GestionDepartamentos(Connection conexion) throws SQLException {
+//        ENUNCIADO: Modificar un departamento
+        Departamento departamentoModificado = new Departamento();
+        //Pedimos departamento al usuario
+        int dept_no_user = pedirEntero("Introduzca el 'dept_no' del departamento que quieres modificar:");
+        //SENTENCIA DE BÚSQUEDA
+        String sql = "SELECT * FROM DEPARTAMENTOS WHERE dept_no = ?";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setInt(1, dept_no_user);
+        ResultSet resultado = sentenciaPreparada.executeQuery();
+        resultado.next();//Sacamos el primer y único resultado teórico.
+        //Recorremos el resultado mientras preguntamos las modificaciones
+        System.out.println("===== MODIFICANDO DEPARTAMENTO =====");
+        //dnombre
+        if (seguir("¿Desea modificar el nombre del departamento?")) {
+            System.out.println("El nombre actual es " + resultado.getString("dnombre"));
+            departamentoModificado.setDnombre(pedirString("Introduzca el nombre modificado:"));
+        }
+        //loc
+        if (seguir("¿Desea modificar la localización del departamento?")) {
+            System.out.println("La localización actual es " + resultado.getString("loc"));
+            departamentoModificado.setLoc(pedirString("Introduzca la localización modificada:"));
+        }
+        //SENTENCIA DE ACTUALIZACIÓN
+        sql = "UPDATE DEPARTAMENTOS SET dnombre = ?,loc = ? WHERE dept_no = ?";
+        sentenciaPreparada = conexion.prepareStatement(sql);
+        //dnombre
+        if (departamentoModificado.getDnombre() != null) {
+            sentenciaPreparada.setString(1, departamentoModificado.getDnombre());
+        } else {
+            sentenciaPreparada.setString(1, resultado.getString("dnombre"));
+        }
+        //loc
+        if (departamentoModificado.getLoc() != null) {
+            sentenciaPreparada.setString(2, departamentoModificado.getLoc());
+        } else {
+            sentenciaPreparada.setString(2, resultado.getString("loc"));
+        }
+        //dept_no
+        sentenciaPreparada.setInt(3, dept_no_user);
+
+        System.out.println("Se han actualizado " + sentenciaPreparada.executeUpdate() + " filas.");
+//      LIBERAMOS RECURSOS
+        resultado.close();
+        sentenciaPreparada.close();
+
+        System.out.println("¡DEPARTAMENTO ACTUALIZADO CORRECTAMENTE!");
+    }
+
+    public static void opcion3GestionDepartamentos(Connection conexion) throws SQLException {
+//        ENUNCIADO: Eliminar departamento
+        //Pedimos el dept_no al usuario
+        int dept_no_user = pedirEntero("Introduzca el 'dept_no' del departamento que quieres eliminar:");
+        //SENTENCIA PARA ELIMINAR
+        String sql = "DELETE FROM DEPARTAMENTOS WHERE dept_no = ?";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setInt(1, dept_no_user);
+        System.out.println("Se han actualizado " + sentenciaPreparada.executeUpdate() + " filas.");
+//      LIBERAMOS RECURSOS
+        sentenciaPreparada.close();
+
+        System.out.println("¡DEPARTAMENTO ELIMINADO CORRECTAMENTE!");
+    }
+
+    public static void opcion4GestionDepartamentos(Connection conexion) throws SQLException {
+//        ENUNCIADO: Consultar todos los departamentos
+        //SENTENCIA DE BÚSQUEDA
+        Statement sentencia = conexion.createStatement();
+        String sql = "SELECT * FROM DEPARTAMENTOS";
+        ResultSet resultado = sentencia.executeQuery(sql);
+        System.out.println("===== DEPARTAMENTOS =====");
+        while (resultado.next()) {
+            System.out.println("---------------------");
+            System.out.println("dept_no: " + resultado.getInt("dept_no"));
+            System.out.println("dnombre: " + resultado.getString("dnombre"));
+            System.out.println("loc: " + resultado.getString("loc"));
+        }
+        System.out.println("===== FIN DE DEPARTAMENTOS =====");
+
+//        LIBERAMOS RECURSOS
+        resultado.close();
+        sentencia.close();
+    }
+
+    public static void opcion5GestionDepartamentos(Connection conexion) throws SQLException {
+//        ENUNCIADO: Ver información de un único departamento por nombre
+        System.out.println("===== BÚSQUEDA DE DEPARTAMENTO POR NOMBRE =====");
+        //Pedimos nombre al usuario
+        String dnombre_user = pedirString("Introduce el nombre del departamento:");
+        //CONSULTA DE BÚSQUEDA
+        String sql = "SELECT * FROM DEPARTAMENTOS WHERE dnombre = ?";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setString(1, dnombre_user);
+        ResultSet resultado = sentenciaPreparada.executeQuery();
+        resultado.next();
+//        Muestro el departamento
+        System.out.println("dept_no: " + resultado.getInt("dept_no"));
+        System.out.println("dnombre: " + resultado.getString("dnombre"));
+        System.out.println("loc: " + resultado.getString("loc"));
+        System.out.println("===============================================");
+
+//        LIBERO RECURSOS
+        resultado.close();
+        sentenciaPreparada.close();
+    }
+
+    public static void opcion6GestionDepartamentos(Connection conexion) throws SQLException {
+//        ENUNCIADO: Ver información de un único departamento por nombre
+        System.out.println("===== BÚSQUEDA DE DEPARTAMENTO POR ID =====");
+        //Pedimos nombre al usuario
+        int dept_no_user = pedirEntero("Introduce el 'dept_no' del departamento:");
+        //CONSULTA DE BÚSQUEDA
+        String sql = "SELECT * FROM DEPARTAMENTOS WHERE dept_no = ?";
+        PreparedStatement sentenciaPreparada = conexion.prepareStatement(sql);
+        sentenciaPreparada.setInt(1, dept_no_user);
+        ResultSet resultado = sentenciaPreparada.executeQuery();
+        resultado.next();
+//        Muestro el departamento
+        System.out.println("dept_no: " + resultado.getInt("dept_no"));
+        System.out.println("dnombre: " + resultado.getString("dnombre"));
+        System.out.println("loc: " + resultado.getString("loc"));
+        System.out.println("============================================");
+
+//        LIBERO RECURSOS
+        resultado.close();
+        sentenciaPreparada.close();
+    }
     //=======================================================================
 
 }
