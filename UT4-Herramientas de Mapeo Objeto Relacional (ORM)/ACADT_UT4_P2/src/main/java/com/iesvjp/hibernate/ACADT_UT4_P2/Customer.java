@@ -5,19 +5,18 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-
 /**
  * The persistent class for the customers database table.
  * 
  */
 @Entity
-@Table(name="customers")
-@NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c")
+@Table(name = "customers")
+@NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c")
 public class Customer implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int customerNumber;
 
 	private String addressLine1;
@@ -42,17 +41,17 @@ public class Customer implements Serializable {
 
 	private String state;
 
-	//bi-directional many-to-one association to Employee
+	// bi-directional many-to-one association to Employee
 	@ManyToOne
-	@JoinColumn(name="salesRepEmployeeNumber")
+	@JoinColumn(name = "salesRepEmployeeNumber")
 	private Employee employee;
 
-	//bi-directional many-to-one association to Order
-	@OneToMany(mappedBy="customer")
+	// bi-directional many-to-one association to Order
+	@OneToMany(mappedBy = "customer")
 	private List<Order> orders;
 
-	//bi-directional many-to-one association to Payment
-	@OneToMany(mappedBy="customer")
+	// bi-directional many-to-one association to Payment
+	@OneToMany(mappedBy = "customer")
 	private List<Payment> payments;
 
 	public Customer() {
@@ -204,6 +203,13 @@ public class Customer implements Serializable {
 		payment.setCustomer(null);
 
 		return payment;
+	}
+
+	@Override
+	public String toString() {
+		return "-Customer [customerNumber=" + customerNumber + ", contactFirstName=" + contactFirstName
+				+ ", contactLastName=" + contactLastName + ", customerName=" + customerName + ", employee=" + employee
+				+ "]";
 	}
 
 }

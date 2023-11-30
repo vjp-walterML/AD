@@ -158,4 +158,12 @@ public class Employee implements Serializable {
 		this.office = office;
 	}
 
+	@Override
+	public String toString() {
+		return "-Employee [employeeNumber=" + employeeNumber + ", email=" + email + ", extension=" + extension
+				+ ", firstName=" + firstName + ", jobTitle=" + jobTitle + ", lastName=" + lastName + ", office="
+				+ office + "]";
+	}
+
+	
 }

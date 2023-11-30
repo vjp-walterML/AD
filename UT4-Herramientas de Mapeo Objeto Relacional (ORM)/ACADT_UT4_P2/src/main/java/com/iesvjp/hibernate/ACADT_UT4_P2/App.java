@@ -47,12 +47,16 @@ public class App {
 				menu1OpcionC(em);
 				break;
 			case 'D':
+				menu1OpcionD(em);
 				break;
 			case 'E':
+				menu1OpcionE(em);
 				break;
 			case 'F':
+				menu1OpcionF(em);
 				break;
 			case 'G':
+				menu1OpcionG(em);
 				break;
 			case 'H':
 				break;
@@ -127,6 +131,50 @@ public class App {
 		Query consulta = em.createQuery(sql);
 		BigDecimal maxPago = (BigDecimal) consulta.getSingleResult();
 		System.out.println("El pago de mayor cuantía es " + maxPago);
+	}
+
+	public static void menu1OpcionD(EntityManager em) {
+		String hql = "select e from Employee e where e.office.city = 'San Francisco'";
+		Query query = em.createQuery(hql);
+		List<Employee> resultado = query.getResultList();
+
+		for (Employee employee : resultado) {
+			System.out.println(employee.toString());
+		}
+	}
+
+	public static void menu1OpcionE(EntityManager em) {
+		String hql = "select o.officeCode, o.city, size(o.employees) from Office o group by o.officeCode order by size(o.employees)";
+		Query query = em.createQuery(hql);
+		List<Object[]> resultado = query.getResultList();
+		for (Object[] o : resultado) {
+			System.out.println("- OfficeCode:" + o[0] + ", City:" + o[1] + ", NumEmpleados:" + o[2]);
+		}
+	}
+
+	public static void menu1OpcionF(EntityManager em) {
+		String hql = "select c from Customer c where c.employee.firstName = 'Gerard' and c.employee.lastName = 'Hernandez'";
+		Query query = em.createQuery(hql);
+		List<Customer> resultado = query.getResultList();
+		for (Customer customer : resultado) {
+			System.out.println(customer.toString());
+		}
+	}
+
+	public static void menu1OpcionG(EntityManager em) {
+		String hql = "select e.employeeNumber, e.firstName, size(e.customers) from Employee e "
+				+ "group by e.employeeNumber "
+				+ "having size(e.customers) >= ALL (select size(em.customers) from Employee em group by em.employeeNumber)";
+		Query query = em.createQuery(hql);
+		List<Object[]> resultado = query.getResultList();
+		for (Object[] o : resultado) {
+			System.out.println("- NumEmpleado:" + o[0] + ", Nombre:" + o[1] + ", NumClientes:" + o[2]);
+		}
+	}
+
+	public static void menu1OpcionH(EntityManager em) {
+		String hql
+		Query query = em.createQuery(hql);
 	}
 
 	// UTILERIA
