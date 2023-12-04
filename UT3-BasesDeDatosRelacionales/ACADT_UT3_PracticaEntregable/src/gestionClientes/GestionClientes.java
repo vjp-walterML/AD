@@ -35,7 +35,6 @@ public class GestionClientes {
             }
         } while (opcion != 5);
     }
-
     //    Mostrar menú
     private static int mostrarMenu() {
         System.out.println("\n***********************************************");
@@ -51,6 +50,7 @@ public class GestionClientes {
         System.out.println("*********************************************");
         return Utileria.pedirEntero("Introduzca una opción: ");
     }
+
 
     //OPCIÓN 1 - INSERTAR CLIENTE
     private static void opcion1(Connection conexion) {

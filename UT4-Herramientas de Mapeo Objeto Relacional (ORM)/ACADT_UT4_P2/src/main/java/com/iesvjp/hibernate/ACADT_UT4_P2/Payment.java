@@ -64,4 +64,11 @@ public class Payment implements Serializable {
 		this.customer = customer;
 	}
 
+	@Override
+	public String toString() {
+		return "Payment [id=" + id + ", amount=" + amount + ", paymentDate=" + paymentDate + ", customer=" + customer
+				+ "]";
+	}
+
+	
 }

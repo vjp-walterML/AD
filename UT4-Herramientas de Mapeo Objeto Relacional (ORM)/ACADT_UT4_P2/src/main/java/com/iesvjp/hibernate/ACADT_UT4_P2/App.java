@@ -23,8 +23,10 @@ public class App {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("ACADT_UT4_P2");
 		EntityManager em = emf.createEntityManager();
 
-		// Menu1
+		// Menus
 		menu1(em);
+		// menu2(em);
+
 		// Libero recursos
 		em.close();
 		emf.close();
@@ -59,14 +61,19 @@ public class App {
 				menu1OpcionG(em);
 				break;
 			case 'H':
+				menu1OpcionH(em);
 				break;
 			case 'I':
+				menu1OpcionI(em);
 				break;
 			case 'J':
+				menu1OpcionJ(em);
 				break;
 			case 'K':
+				menu1OpcionK(em);
 				break;
 			case 'L':
+				menu1OpcionL(em);
 				break;
 			case 'M':
 				System.out.println("Hasta pronto!");
@@ -77,6 +84,34 @@ public class App {
 				break;
 			}
 		} while (opcion != 'M');
+
+	}
+
+	public static void menu2(EntityManager em) {
+		char opcion;
+		do {
+			opcion = mostrarMenu2();
+			switch (opcion) {
+			case 'a':
+				menu2OpcionA(em);
+				break;
+			case 'b':
+				menu2OpcionB(em);
+				break;
+			case 'c':
+				menu2OpcionC(em);
+				break;
+			case 'd':
+				menu2OpcionD(em);
+				break;
+			case 'e':
+				System.out.println("Hasta pronto!");
+				break;
+			default:
+				System.out.println("ERROR. Introduce una opción válida.");
+				break;
+			}
+		} while (opcion != 'e');
 
 	}
 
@@ -106,38 +141,48 @@ public class App {
 		return pedirChar("Introduzca una opción: ");
 	}
 
+	private static char mostrarMenu2() {
+		System.out.println("\n***********************************************");
+		System.out.println("***************** M E N U   2 *****************");
+		System.out.println("***********************************************");
+		System.out.println("a. Muestra todos aquellos productos cuyo vendedor se pase como parámetro.\r\n"
+				+ "b. Muestra todos aquellos productos cuyo stock sea inferior a 100 unidades.\r\n"
+				+ "c. Muestra el producto cuyo precio recomendado de venta (MSRP) sea el más " + "caro.\r\n"
+				+ "d. Muestra el producto más vendido.\r\n" + "e. Salir.\n");
+		return pedirChar("Introduzca una opción: ");
+	}
+
 	// OPCIONES MENÚ 1
 	// ===========================================================================
 	public static void menu1OpcionA(EntityManager em) {
-		String sql = "select count(p) from Product p";
-		Query consulta = em.createQuery(sql);
-		long numProductos = (long) consulta.getSingleResult();
-		System.out.println("El número total de productos es " + numProductos);
+		String hql = "select count(p) from Product p";
+		Query query = em.createQuery(hql);
+		long resultado = (long) query.getSingleResult();
+		System.out.println("El total de productos es " + resultado);
 	}
 
 	public static void menu1OpcionB(EntityManager em) {
-		String sql = "select o from Order o where o.status = 'disputed'";
-		Query consulta = em.createQuery(sql);
-		List<Order> result = consulta.getResultList();
-
-		for (Order order : result) {
+		String hql = "select o from Order o where o.status='disputed'";
+		Query query = em.createQuery(hql);
+		List<Order> resultado = query.getResultList();
+		for (Order order : resultado) {
 			System.out.println(order.toString());
 		}
-
 	}
 
 	public static void menu1OpcionC(EntityManager em) {
-		String sql = "select max(p.amount) from Payment p";
-		Query consulta = em.createQuery(sql);
-		BigDecimal maxPago = (BigDecimal) consulta.getSingleResult();
-		System.out.println("El pago de mayor cuantía es " + maxPago);
+		String hql = "select p from Payment p where p.amount = (select max(pa.amount) from Payment pa)";
+		Query query = em.createQuery(hql);
+		List<Payment> resultado = query.getResultList();
+		for (Payment payment : resultado) {
+			System.out.println(payment.toString());
+		}
 	}
 
 	public static void menu1OpcionD(EntityManager em) {
 		String hql = "select e from Employee e where e.office.city = 'San Francisco'";
 		Query query = em.createQuery(hql);
 		List<Employee> resultado = query.getResultList();
-
 		for (Employee employee : resultado) {
 			System.out.println(employee.toString());
 		}
@@ -148,12 +193,12 @@ public class App {
 		Query query = em.createQuery(hql);
 		List<Object[]> resultado = query.getResultList();
 		for (Object[] o : resultado) {
-			System.out.println("- OfficeCode:" + o[0] + ", City:" + o[1] + ", NumEmpleados:" + o[2]);
+			System.out.println("- CodOficina:" + o[0] + ", Ciudad:" + o[1] + ", NumEmpleados:" + o[2]);
 		}
 	}
 
 	public static void menu1OpcionF(EntityManager em) {
-		String hql = "select c from Customer c where c.employee.firstName = 'Gerard' and c.employee.lastName = 'Hernandez'";
+		String hql = "select c from Customer c where c.employee.firstName='Gerard' and c.employee.lastName='Hernandez'";
 		Query query = em.createQuery(hql);
 		List<Customer> resultado = query.getResultList();
 		for (Customer customer : resultado) {
@@ -162,19 +207,93 @@ public class App {
 	}
 
 	public static void menu1OpcionG(EntityManager em) {
-		String hql = "select e.employeeNumber, e.firstName, size(e.customers) from Employee e "
-				+ "group by e.employeeNumber "
-				+ "having size(e.customers) >= ALL (select size(em.customers) from Employee em group by em.employeeNumber)";
+		String hql = "select e from Employee e where size(e.customers) >= all (select size(emp.customers) from Employee emp group by emp.employeeNumber)";
 		Query query = em.createQuery(hql);
-		List<Object[]> resultado = query.getResultList();
-		for (Object[] o : resultado) {
-			System.out.println("- NumEmpleado:" + o[0] + ", Nombre:" + o[1] + ", NumClientes:" + o[2]);
+		List<Employee> resultado = query.getResultList();
+		for (Employee employee : resultado) {
+			System.out.println(employee.toString());
 		}
 	}
 
 	public static void menu1OpcionH(EntityManager em) {
-		String hql
+		em.getTransaction().begin();
+		String hql = "update Product p set p.msrp = round(p.msrp * 1.05,2) where p.productline.productLine ='Motorcycles'";
 		Query query = em.createQuery(hql);
+		int resultado = query.executeUpdate();
+		em.getTransaction().commit();
+
+		System.out.println("Actualización realizada correctamente, el número de filas afectadas ha sido " + resultado);
+	}
+
+	public static void menu1OpcionI(EntityManager em) {
+		String hql = "select sum(p.amount) from Payment p where year(p.paymentDate)=2005";
+		Query query = em.createQuery(hql);
+		BigDecimal resultado = (BigDecimal) query.getSingleResult();
+		System.out.println("La suma total de ventas del año 2005 ha sido " + resultado);
+	}
+
+	public static void menu1OpcionJ(EntityManager em) {
+		String hql = "select p.customer from Payment p group by p.customer.customerNumber having sum(p.amount)>=120000";
+		Query query = em.createQuery(hql);
+		List<Customer> resultado = query.getResultList();
+		for (Customer customer : resultado) {
+			System.out.println("-" + customer.getCustomerName());
+		}
+	}
+
+	public static void menu1OpcionK(EntityManager em) {
+		String hql = "select p.customer from Payment p group by p.customer.customerNumber order by sum(p.amount) desc";
+		Query query = em.createQuery(hql).setMaxResults(1);
+		Customer resultado = (Customer) query.getSingleResult();
+		System.out.println(resultado.toString());
+	}
+
+	public static void menu1OpcionL(EntityManager em) {
+		Object[] cliente = (Object[]) em.createNativeQuery(
+				"select sum(p.amount) as sumaTotal, c.contactFirstName, c.contactLastName from payments p "
+						+ "inner join customers c ON p.customerNumber=c.customerNumber " + "group by c.customerNumber "
+						+ "order by sumaTotal desc limit 1")
+				.getSingleResult();
+
+		System.out.println("\n====================================================\n");
+		System.out.println("l) El mejor cliente es: -----\n");
+		System.out.println("Nombre : " + cliente[1] + " Apellidos: " + cliente[2] + " Total gastado: " + cliente[0]);
+	}
+
+	// OPCIONES MENÚ 2
+	// ===========================================================================
+	public static void menu2OpcionA(EntityManager em) {
+		String nombreVendedor = pedirString("Indroduzca el nombre del vendedor: ");
+
+		Query query = em.createNamedQuery("Product.consultaA");
+		query.setParameter("vendedor", nombreVendedor);
+
+		List<Product> resultado = query.getResultList();
+
+		for (Product product : resultado) {
+			System.out.println(product.toString());
+		}
+	}
+
+	public static void menu2OpcionB(EntityManager em) {
+		Query query = em.createNamedQuery("Product.consultaB");
+		List<Product> resultado = query.getResultList();
+
+		for (Product product : resultado) {
+			System.out.println(product.toString());
+		}
+	}
+
+	public static void menu2OpcionC(EntityManager em) {
+		Query query = em.createNamedQuery("Product.consultaC").setMaxResults(1);
+		Product resultado = (Product) query.getSingleResult();
+		System.out.println(resultado.toString());
+	}
+
+	public static void menu2OpcionD(EntityManager em) {
+		Query query = em.createNamedQuery("Product.consultaD").setMaxResults(1);
+		Object[] resultado = (Object[]) query.getSingleResult();
+		System.out.println("El producto más vendido es " + resultado[0] + " con " + resultado[1] + " ventas.");
 	}
 
 	// UTILERIA

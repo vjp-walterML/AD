@@ -5,19 +5,23 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-
 /**
  * The persistent class for the products database table.
  * 
  */
 @Entity
-@Table(name="products")
-@NamedQuery(name="Product.findAll", query="SELECT p FROM Product p")
+@Table(name = "products")
+@NamedQueries({
+		@NamedQuery(name = "Product.consultaA", query = "select p from Product p where p.productVendor = :vendedor"),
+		@NamedQuery(name = "Product.consultaB", query = "select p from Product p where p.quantityInStock < 100"), 
+		@NamedQuery(name = "Product.consultaC", query = "select p from Product p where p.msrp = (select max(pr.msrp) from Product pr)"),
+		@NamedQuery(name = "Product.consultaD", query = "select o.product.productName, sum(o.quantityOrdered) as suma from Orderdetail o group by o.product order by suma desc"),
+})
 public class Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String productCode;
 
 	private BigDecimal buyPrice;
@@ -35,13 +39,13 @@ public class Product implements Serializable {
 
 	private short quantityInStock;
 
-	//bi-directional many-to-one association to Orderdetail
-	@OneToMany(mappedBy="product")
+	// bi-directional many-to-one association to Orderdetail
+	@OneToMany(mappedBy = "product")
 	private List<Orderdetail> orderdetails;
 
-	//bi-directional many-to-one association to Productline
+	// bi-directional many-to-one association to Productline
 	@ManyToOne
-	@JoinColumn(name="productLine")
+	@JoinColumn(name = "productLine")
 	private Productline productline;
 
 	public Product() {
@@ -139,6 +143,12 @@ public class Product implements Serializable {
 
 	public void setProductline(Productline productline) {
 		this.productline = productline;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [productCode=" + productCode + ", productName=" + productName + ", productVendor="
+				+ productVendor + "]";
 	}
 
 }
