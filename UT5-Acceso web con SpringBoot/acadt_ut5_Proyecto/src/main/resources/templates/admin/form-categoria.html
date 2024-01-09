@@ -53,25 +53,25 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-offset-2 col-md-8">
-				<form method="post" action="#">
+				<form action="#" th:action="@{/admin/categoria/addCategoria}" th:object="${categoriaModel}" method="post">
 					<h1>
 						<span></span>
 						Categoría
 					</h1>
-					<input type="hidden" id="id" />
+					<input type="hidden" th:field="*{id}" />
 					<div class="form-group">
 						<label class="control-label" for="nombre">Nombre</label> <input type="text"
-							class="form-control" id="nombre" placeholder="Nombre"
+							class="form-control" id="nombre" th:field="*{nombre}" th:value="*{nombre}" placeholder="Nombre"
 							required="required" >
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="imagen">URL de la imagen</label> <input type="url"
-							class="form-control" id="imagen" placeholder="http://..."
+							class="form-control" id="imagen" th:field="*{imagen}" th:value="*{imagen}" placeholder="http://..."
 							>
 					</div>
 					<div class="form-group">
 						<label class="control-label" for="destacada"> <input type="checkbox"
-							id="destacada" value="true" > Es
+							id="destacada" th:field="*{destacada}" th:checked="*{destacada} ? 'checked'"> Es
 							destacada
 						</label>
 					</div>
